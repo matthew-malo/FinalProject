@@ -153,33 +153,6 @@ public class MoodDetermination extends AppCompatActivity {
         return result;
     }
 
-    protected static void processFaceList(List<FirebaseVisionFace> faces) {
-        // [START mlkit_face_list]
-        for (FirebaseVisionFace face : faces) {
-            Rect bounds = face.getBoundingBox();
-            float rotY = face.getHeadEulerAngleY();  // Head is rotated to the right rotY degrees
-            float rotZ = face.getHeadEulerAngleZ();  // Head is tilted sideways rotZ degrees
-
-
-            // If classification was enabled:
-            float smileProb = face.getSmilingProbability();
-            float rightEyeOpenProb = face.getRightEyeOpenProbability();
-
-            // If face tracking was enabled:
-            if (face.getTrackingId() != FirebaseVisionFace.INVALID_ID) {
-                int id = face.getTrackingId();
-            }
-            if (smileProb > .80 && rightEyeOpenProb > .80) {
-                mood = "Happy";
-            } else if (smileProb < .80 && rightEyeOpenProb > .80) {
-                mood = "Angry";
-            } else if (smileProb < .80 && rightEyeOpenProb < .80) {
-                mood = "Sad";
-            }
-            // [END mlkit_face_list]
-        }
-    }
-
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
