@@ -22,9 +22,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -45,12 +42,14 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 public class MoodDetermination extends AppCompatActivity {
     private static final String TAG = "AndroidCameraApi";
@@ -76,14 +75,12 @@ public class MoodDetermination extends AppCompatActivity {
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
 
-    @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textureView = (TextureView) findViewById(R.id.texture);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
-        takePictureButton = (Button) findViewById(R.id.btn_takepicture);
         assert takePictureButton != null;
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,12 +98,6 @@ public class MoodDetermination extends AppCompatActivity {
                     .setPerformanceMode(FirebaseVisionFaceDetectorOptions.ACCURATE)
                     .setLandmarkMode(FirebaseVisionFaceDetectorOptions.ALL_LANDMARKS)
                     .setClassificationMode(FirebaseVisionFaceDetectorOptions.ALL_CLASSIFICATIONS)
-                    .build();
-
-    // Real-time contour detection of multiple faces
-    FirebaseVisionFaceDetectorOptions realTimeOpts =
-            new FirebaseVisionFaceDetectorOptions.Builder()
-                    .setContourMode(FirebaseVisionFaceDetectorOptions.ALL_CONTOURS)
                     .build();
 
 
@@ -244,58 +235,54 @@ public class MoodDetermination extends AppCompatActivity {
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
-                        save(bytes);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     } finally {
                         if (image != null) {
                             image.close();
                         }
                     }
-                }
-                FirebaseVisionImage image2 = FirebaseVisionImage.fromMediaImage(image, getWindowManager().getDefaultDisplay().getRotation());
-                FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
-                        .getVisionFaceDetector(options);
-                Task<List<FirebaseVisionFace>> result =
-                        detector.detectInImage(image2)
-                                .addOnSuccessListener(
-                                        new OnSuccessListener<List<FirebaseVisionFace>>() {
-                                            @Override
-                                            public void onSuccess(List<FirebaseVisionFace> faces) {
-                                                for (FirebaseVisionFace face : faces) {
-                                                    Rect bounds = face.getBoundingBox();
-                                                    float rotY = face.getHeadEulerAngleY();  // Head is rotated to the right rotY degrees
-                                                    float rotZ = face.getHeadEulerAngleZ();  // Head is tilted sideways rotZ degrees
 
-                                                    // If classification was enabled:
-                                                    float smileProb = face.getSmilingProbability();
-                                                    float rightEyeOpenProb = face.getRightEyeOpenProbability();
+                    FirebaseVisionImage image2 = FirebaseVisionImage.fromMediaImage(image, getWindowManager().getDefaultDisplay().getRotation());
+                    FirebaseVisionFaceDetector detector = FirebaseVision.getInstance()
+                            .getVisionFaceDetector(highAccuracyOpts);
+                    Task<List<FirebaseVisionFace>> result =
+                            detector.detectInImage(image2)
+                                    .addOnSuccessListener(
+                                            new OnSuccessListener<List<FirebaseVisionFace>>() {
+                                                @Override
+                                                public void onSuccess(List<FirebaseVisionFace> faces) {
+                                                    for (FirebaseVisionFace face : faces) {
+                                                        Rect bounds = face.getBoundingBox();
+                                                        float rotY = face.getHeadEulerAngleY();  // Head is rotated to the right rotY degrees
+                                                        float rotZ = face.getHeadEulerAngleZ();  // Head is tilted sideways rotZ degrees
 
-                                                    // If face tracking was enabled:
-                                                    if (face.getTrackingId() != FirebaseVisionFace.INVALID_ID) {
-                                                        int id = face.getTrackingId();
+                                                        // If classification was enabled:
+                                                        float smileProb = face.getSmilingProbability();
+                                                        float rightEyeOpenProb = face.getRightEyeOpenProbability();
+
+                                                        // If face tracking was enabled:
+                                                        if (face.getTrackingId() != FirebaseVisionFace.INVALID_ID) {
+                                                            int id = face.getTrackingId();
+                                                        }
+                                                        if (smileProb > .80 && rightEyeOpenProb > .80) {
+                                                            mood = "Happy";
+                                                        } else if (smileProb < .80 && rightEyeOpenProb > .80) {
+                                                            mood = "Angry";
+                                                        } else if (smileProb < .80 && rightEyeOpenProb < .80) {
+                                                            mood = "Sad";
+                                                        }
+                                                        // [END mlkit_face_list]
                                                     }
-                                                    if (smileProb > .80 && rightEyeOpenProb > .80) {
-                                                        mood = "Happy";
-                                                    } else if (smileProb < .80 && rightEyeOpenProb > .80) {
-                                                        mood = "Angry";
-                                                    } else if (smileProb < .80 && rightEyeOpenProb < .80) {
-                                                        mood = "Sad";
-                                                    }
-                                                    // [END mlkit_face_list]
                                                 }
-                                            }
-                                        })
-                                .addOnFailureListener(
-                                        new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                // Task failed with an exception
-                                                // ...
-                                            }
-                                        });
+                                            })
+                                    .addOnFailureListener(
+                                            new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    // Task failed with an exception
+                                                    // ...
+                                                }
+                                            });
+                }
             };
             reader.setOnImageAvailableListener(readerListener, mBackgroundHandler);
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
@@ -340,7 +327,6 @@ public class MoodDetermination extends AppCompatActivity {
                     }
                     // When the session is ready, we start displaying the preview.
                     cameraCaptureSessions = cameraCaptureSession;
-                    updatePreview();
                 }
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
