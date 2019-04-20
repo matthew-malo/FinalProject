@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'maven'
 
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.moodymusic"
-        minSdkVersion 21
+        minSdkVersion 28
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -17,6 +18,7 @@ android {
         }
     }
 }
+
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -44,5 +46,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-ml-model-interpreter:18.0.0'
     implementation 'com.google.android.material:material:1.0.0'
 
+    //watson
+    implementation 'com.ibm.watson.developer_cloud:android-sdk:0.5.0'
+    implementation 'com.ibm.watson.developer_cloud:speech-to-text:6.1.1'
 }
 apply plugin: 'com.google.gms.google-services'
