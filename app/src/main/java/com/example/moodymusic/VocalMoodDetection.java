@@ -10,9 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneHelper;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
@@ -23,6 +23,9 @@ import com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionR
 import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback;
 
 import java.io.IOException;
+import java.io.InputStream;
+
+import static android.provider.Settings.System.getString;
 
 
 public class VocalMoodDetection {
@@ -54,30 +57,9 @@ public class VocalMoodDetection {
 
         speechService = initSpeechToTextService();
 
-        RadioGroup targetLanguage = findViewById(R.id.target_language);
         input = findViewById(R.id.input);
         mic = findViewById(R.id.mic);
-        translate = findViewById(R.id.translate);
-        play = findViewById(R.id.play);
-        translatedText = findViewById(R.id.translated_text);
 
-
-        targetLanguage.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.spanish:
-                        selectedTargetLanguage = Language.SPANISH;
-                        break;
-                    case R.id.french:
-                        selectedTargetLanguage = Language.FRENCH;
-                        break;
-                    case R.id.italian:
-                        selectedTargetLanguage = Language.ITALIAN;
-                        break;
-                }
-            }
-        });
 
         input.addTextChangedListener(new EmptyTextWatcher() {
             @Override
@@ -248,20 +230,6 @@ public class VocalMoodDetection {
         @Override
         public void onDisconnected() {
             enableMicButton();
-        }
-    }
-
-
-    private class SynthesisTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            SynthesizeOptions synthesizeOptions = new SynthesizeOptions.Builder()
-                    .text(params[0])
-                    .voice(SynthesizeOptions.Voice.EN_US_LISAVOICE)
-                    .accept(SynthesizeOptions.Accept.AUDIO_WAV)
-                    .build();
-            player.playStream(textService.synthesize(synthesizeOptions).execute());
-            return "Did synthesize";
         }
     }
 
