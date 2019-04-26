@@ -1,14 +1,14 @@
-package com.example.moody;
+package com.example.moodymusic;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 
 public class Register extends AppCompatActivity implements View.OnClickListener {
 
@@ -37,7 +37,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         switch(v.getId()){
             case R.id.bRegister:
 
-                startActivity (new Intent(this, Login.class));
+                startActivity (new Intent(this, com.example.moody.Login.class));
 
                 break;
         }
