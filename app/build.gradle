@@ -40,8 +40,8 @@ dependencies {
     //spotify
     implementation project(':spotify-app-remote')
     implementation "com.google.code.gson:gson:2.8.5"
-	implementation 'com.github.kaaes:spotify-web-api-android:0.4.1'
-	implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.github.kaaes:spotify-web-api-android:0.4.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.spotify.sdk:spotify-auth:1.1.0@aar'
     implementation 'com.android.support:appcompat-v7:21.0.3'
 
