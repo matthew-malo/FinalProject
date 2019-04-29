@@ -119,27 +119,6 @@ public class VocalMoodDetection {
     }
 
 
-    private void showTranslation(final String translation) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                translatedText.setText(translation);
-            }
-        });
-    }
-
-    private void showError(final Exception e) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-                // Update the icon background
-                mic.setBackgroundColor(Color.LTGRAY);
-            }
-        });
-    }
-
     private void showMicText(final String text) {
         runOnUiThread(new Runnable() {
             @Override
