@@ -2,9 +2,27 @@
     <string name="app_name">Moody Music</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Moody Music</string>
+    <string name="nav_header_subtitle">The Mood Based Music Service</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="take_picture">Take picture</string>
+
+    <string name="Moody">WatsonAssistant</string>
+    <!-- Watson Conversation Service Credentials -->
+    <string name="workspace_id">Your Workspace ID of Watson Assistant</string>
+    <string name="conversation_username">Your Watson Assistant Username</string>
+    <string name="conversation_password">Your Watson Assistant Password</string>
+    <string name="conversation_endpoint">https://gateway.watsonplatform.net/conversation/api</string>
+
+    <!--Watson Speech-To-Text Service Credentials-->
+    <string name="STT_username">Your Speech to Text Username</string>
+    <string name="STT_password">Your Speech to Text Password</string>
+
+    <!--Watson Text-To-Speech Service Credentials-->
+    <string name="TTS_username">Your Text to Speech Username</string>
+    <string name="TTS_password">Your Text to Speech Password</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

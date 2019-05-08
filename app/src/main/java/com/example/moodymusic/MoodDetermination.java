@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -19,9 +18,7 @@ import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -41,8 +38,6 @@ import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 
-import java.io.File;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,28 +47,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 public class MoodDetermination extends AppCompatActivity {
-    private static final String TAG = "AndroidCameraApi";
+    private static final String TAG = "Facial Mood Determination";
     private Button takePictureButton;
     private TextureView textureView;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
     private String cameraId;
     protected CameraDevice cameraDevice;
     protected CameraCaptureSession cameraCaptureSessions;
-    protected CaptureRequest captureRequest;
     protected CaptureRequest.Builder captureRequestBuilder;
     private Size imageDimension;
     private ImageReader imageReader;
-    private File file;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private boolean mFlashSupported;
     private Handler mBackgroundHandler;
-    private HandlerThread mBackgroundThread;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,8 +87,7 @@ public class MoodDetermination extends AppCompatActivity {
 
 
     /**
-     * Get the angle by which an image must be rotated given the device's current
-     * orientation.
+     * Firebase Image Processing Settings
      */
     protected static int getRotationCompensation(String cameraId, Activity activity, Context context)
             throws CameraAccessException {
@@ -117,9 +101,7 @@ public class MoodDetermination extends AppCompatActivity {
         // devices it is 270 degrees. For devices with a sensor orientation of
         // 270, rotate the image an additional 180 ((270 + 270) % 360) degrees.
         CameraManager cameraManager = (CameraManager) context.getSystemService(CAMERA_SERVICE);
-        int sensorOrientation = cameraManager
-                .getCameraCharacteristics(cameraId)
-                .get(CameraCharacteristics.SENSOR_ORIENTATION);
+        int sensorOrientation = cameraManager.getCameraCharacteristics(cameraId).get(CameraCharacteristics.SENSOR_ORIENTATION);
         rotationCompensation = (rotationCompensation + sensorOrientation + 270) % 360;
 
         // Return the corresponding FirebaseVisionImageMetadata rotation value.
@@ -147,32 +129,30 @@ public class MoodDetermination extends AppCompatActivity {
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            //open your camera here
             openCamera();
         }
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-            // Transform you image captured size according to the surface width and height
         }
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            return false;
+            return true;
         }
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         }
     };
+
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
-            //This is called when the camera is open
-            Log.e(TAG, "onOpened");
             cameraDevice = camera;
-            createCameraPreview();
+            createCameraPreviewSession();
         }
         @Override
         public void onDisconnected(CameraDevice camera) {
             cameraDevice.close();
+            cameraDevice = null;
         }
         @Override
         public void onError(CameraDevice camera, int error) {
@@ -180,22 +160,6 @@ public class MoodDetermination extends AppCompatActivity {
             cameraDevice = null;
         }
     };
-    protected void startBackgroundThread() {
-        mBackgroundThread = new HandlerThread("Camera Background");
-        mBackgroundThread.start();
-        mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
-    }
-    protected void stopBackgroundThread() {
-        mBackgroundThread.quitSafely();
-        try {
-            mBackgroundThread.join();
-            mBackgroundThread = null;
-            mBackgroundHandler = null;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     protected void takePicture() {
         if(null == cameraDevice) {
@@ -205,16 +169,8 @@ public class MoodDetermination extends AppCompatActivity {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
-            Size[] jpegSizes = null;
-            if (characteristics != null) {
-                jpegSizes = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-            }
-            int width = 640;
-            int height = 480;
-            if (jpegSizes != null && 0 < jpegSizes.length) {
-                width = jpegSizes[0].getWidth();
-                height = jpegSizes[0].getHeight();
-            }
+            int width = 800;
+            int height = 600;
             ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
             List<Surface> outputSurfaces = new ArrayList<Surface>(2);
             outputSurfaces.add(reader.getSurface());
@@ -225,16 +181,12 @@ public class MoodDetermination extends AppCompatActivity {
             // Orientation
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
                     Image image = null;
                     try {
                         image = reader.acquireLatestImage();
-                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                        byte[] bytes = new byte[buffer.capacity()];
-                        buffer.get(bytes);
                     } finally {
                         if (image != null) {
                             image.close();
@@ -251,18 +203,10 @@ public class MoodDetermination extends AppCompatActivity {
                                                 @Override
                                                 public void onSuccess(List<FirebaseVisionFace> faces) {
                                                     for (FirebaseVisionFace face : faces) {
-                                                        Rect bounds = face.getBoundingBox();
-                                                        float rotY = face.getHeadEulerAngleY();  // Head is rotated to the right rotY degrees
-                                                        float rotZ = face.getHeadEulerAngleZ();  // Head is tilted sideways rotZ degrees
 
-                                                        // If classification was enabled:
                                                         float smileProb = face.getSmilingProbability();
                                                         float rightEyeOpenProb = face.getRightEyeOpenProbability();
 
-                                                        // If face tracking was enabled:
-                                                        if (face.getTrackingId() != FirebaseVisionFace.INVALID_ID) {
-                                                            int id = face.getTrackingId();
-                                                        }
                                                         if (smileProb > .80 && rightEyeOpenProb > .80) {
                                                             mood = "Happy";
                                                         } else if (smileProb < .80 && rightEyeOpenProb > .80) {
@@ -278,8 +222,7 @@ public class MoodDetermination extends AppCompatActivity {
                                             new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull Exception e) {
-                                                    // Task failed with an exception
-                                                    // ...
+                                                    Toast.makeText(MoodDetermination.this, "Mood was not Determined", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
                 }
@@ -289,8 +232,8 @@ public class MoodDetermination extends AppCompatActivity {
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(MoodDetermination.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
-                    createCameraPreview();
+                    Toast.makeText(MoodDetermination.this, "Mood Determined" + mood, Toast.LENGTH_SHORT).show();
+                    createCameraPreviewSession();
                 }
             };
             cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
@@ -310,7 +253,7 @@ public class MoodDetermination extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    protected void createCameraPreview() {
+    protected void createCameraPreviewSession() {
         try {
             SurfaceTexture texture = textureView.getSurfaceTexture();
             assert texture != null;
@@ -337,9 +280,9 @@ public class MoodDetermination extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
     private void openCamera() {
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        Log.e(TAG, "is camera open");
         try {
             cameraId = manager.getCameraIdList()[1];
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
@@ -355,7 +298,6 @@ public class MoodDetermination extends AppCompatActivity {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-        Log.e(TAG, "openCamera X");
     }
 
     private void closeCamera() {
@@ -367,24 +309,5 @@ public class MoodDetermination extends AppCompatActivity {
             imageReader.close();
             imageReader = null;
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.e(TAG, "onResume");
-        startBackgroundThread();
-        if (textureView.isAvailable()) {
-            openCamera();
-        } else {
-            textureView.setSurfaceTextureListener(textureListener);
-        }
-    }
-    @Override
-    protected void onPause() {
-        Log.e(TAG, "onPause");
-        //closeCamera();
-        stopBackgroundThread();
-        super.onPause();
     }
 }
