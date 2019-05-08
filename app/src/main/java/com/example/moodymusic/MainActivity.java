@@ -5,16 +5,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
-import com.spotify.android.appremote.api.SpotifyAppRemote;
-
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
 
 
 public class MainActivity extends AppCompatActivity
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Is your determined mood correct, or has your mood changed?", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -97,8 +97,8 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_login) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
-        } else if (id == R.id.nav_activity) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ActivityFragment()).commit();
+        } else if (id == R.id.nav_activity_panel) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ActivityPanelFragment()).commit();
 
         } else if (id == R.id.nav_camera) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FacialMoodDetermination()).commit();
