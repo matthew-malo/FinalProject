@@ -19,7 +19,9 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url = "http://repo.maven.apache.org/maven2" }
+        maven { url = "http://repo.maven.apache.org/maven2"
+                url  "https://dl.bintray.com/ibm-cloud-sdks/ibm-cloud-sdk-repo"
+        }
     }
 }
 

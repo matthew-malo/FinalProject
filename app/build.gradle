@@ -37,15 +37,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-
     //spotify
     implementation project(':spotify-app-remote')
-    implementation "com.google.code.gson:gson:2.8.5"
+    implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.github.kaaes:spotify-web-api-android:0.4.1'
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.spotify.sdk:spotify-auth:1.1.0@aar'
-    implementation 'com.android.support:appcompat-v7:21.0.3'
-
     //firebase
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.firebase:firebase-client-android:2.5.0'
@@ -55,9 +52,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.2.1'
     implementation 'com.google.firebase:firebase-ml-model-interpreter:18.0.0'
     implementation 'com.google.android.material:material:1.0.0'
-
     //watson
     implementation 'com.ibm.watson.developer_cloud:android-sdk:0.5.0'
     implementation 'com.ibm.watson.developer_cloud:speech-to-text:6.1.1'
+    implementation 'com.ibm.watson:ibm-watson:7.0.0'
+    implementation files('libs/ibm-watson-7.0.0-jar-with-dependencies.jar')
 }
 apply plugin: 'com.google.gms.google-services'

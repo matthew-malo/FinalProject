@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity
     private static final String CLIENT_ID = "0a56920e0ebb4095b0588d139919af68";
     private static final String REDIRECT_URI = "moody-music-app-login://callback";
     private SpotifyAppRemote mSpotifyAppRemote;
+    private static final int REQUEST_CAMERA_PERMISSION = 200;
     protected String mood = "";
 
     @Override
@@ -74,6 +76,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public void onAttachFragment(Fragment fragment){
+        if(TAG.equals("FacialMoodDetermination")){
+
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -97,13 +105,13 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_login) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
+
         } else if (id == R.id.nav_activity_panel) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ActivityPanelFragment()).commit();
 
         } else if (id == R.id.nav_camera) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FacialMoodDetermination()).commit();
-            MoodDetermination mD = new MoodDetermination();
-            mD.takePicture();
+            FacialMoodDetermination.getMood();
         } else if (id == R.id.nav_microphone) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VocalMoodDetermination()).commit();
 

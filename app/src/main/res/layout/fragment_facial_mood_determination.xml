@@ -7,13 +7,21 @@
     android:clickable="true"
     tools:context=".FacialMoodDetermination">
 
+    <TextView
+        android:id="@+id/text_facial_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mood Determined"
+        android:textSize="20sp"
+        android:layout_gravity="center"
+        />
+
     <Button
         android:id="@+id/takePictureButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Take Picture"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_gravity="bottom|center" />
 
 
 </FrameLayout>

@@ -16,13 +16,13 @@
     <string name="conversation_endpoint">https://gateway.watsonplatform.net/conversation/api</string>
 
     <!--Watson Speech-To-Text Service Credentials-->
-    <string name="STT_username">Your Speech to Text Username</string>
-    <string name="STT_password">Your Speech to Text Password</string>
+    <string name="STT_username">e4cMYVoDJWquCBRPhf0J8ZKnV5RUF96CfoL93nU-wFDa</string>
+    <string name="STT_password">Swami2012</string>
+    <string name="STT_URL">https://stream.watsonplatform.net/speech-to-text/api</string>
 
     <!--Watson Text-To-Speech Service Credentials-->
     <string name="TTS_username">Your Text to Speech Username</string>
     <string name="TTS_password">Your Text to Speech Password</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="api_key">e4cMYVoDJWquCBRPhf0J8ZKnV5RUF96CfoL93nU-wFDa</string>
 </resources>

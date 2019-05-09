@@ -7,13 +7,23 @@
     android:clickable="true"
     tools:context=".VocalMoodDetermination">
 
+    <TextView
+        android:id="@+id/text_vocal_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tell Moody how you are feeling"
+        android:textSize="20sp"
+        android:layout_gravity="center|top" />
+
     <Button
-        android:id="@+id/recordVoiceButton"
+        android:id="@+id/recordVoice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="Tell us how you are feeling" />
+        android:text="Click to Start"
+        android:layout_gravity="bottom|center" />
+
 
 
 </FrameLayout>
