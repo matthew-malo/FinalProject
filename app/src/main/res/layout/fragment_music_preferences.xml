@@ -5,7 +5,7 @@
 
 
     <EditText
-        android:id="@+id/header"
+        android:id="@+id/text_music_preferences_fragment"
         android:layout_width="320dp"
         android:layout_height="66dp"
         android:layout_marginStart="8dp"

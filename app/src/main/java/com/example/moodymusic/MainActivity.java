@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity
     private SpotifyAppRemote mSpotifyAppRemote;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
     protected String mood = "";
+    private String TAG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,3 +1,15 @@
+/*
+ * Copyright 2017 IBM Corp. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
 package com.example.moodymusic;
 
 import android.content.Context;
@@ -47,6 +59,7 @@ public class VocalMoodDetermination extends Fragment {
     private boolean listening = false;
     private Thread newUIThread;
     final Handler threadHandler = new Handler();
+    SpeechToText speechService = initSpeechToTextService();
 
     private static final String ARG_PARAM1 = "param1";
 
@@ -88,7 +101,13 @@ public class VocalMoodDetermination extends Fragment {
         View viewer = inflater.inflate(R.layout.fragment_vocal_mood_determination, container, false);
         TextView textView = viewer.findViewById(R.id.text_vocal_fragment);
         mic = viewer.findViewById(R.id.recordVoice);
-        return textView;
+        mic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View viewer) {
+                startRecording();
+            }
+        });
+        return viewer;
     }
 
     private void enableMicButton() {
@@ -127,7 +146,7 @@ public class VocalMoodDetermination extends Fragment {
                 .build();
     }
 
-    public void onStartRecording(Uri uri) {
+    public void startRecording() {
         mic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,7 +163,6 @@ public class VocalMoodDetermination extends Fragment {
                         @Override
                         public void run() {
                             try {
-                                SpeechToText speechService = initSpeechToTextService();
                                 speechService.recognizeUsingWebSocket(getRecognizeOptions(capture),
                                         new MicrophoneRecognizeDelegate());
                             } catch (Exception e) {

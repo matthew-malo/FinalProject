@@ -122,8 +122,6 @@ public class FacialMoodDetermination extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        assert textureView != null;
-        textureView.setSurfaceTextureListener(textureListener);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
         }
@@ -136,9 +134,11 @@ public class FacialMoodDetermination extends Fragment {
         View viewer = inflater.inflate(R.layout.fragment_facial_mood_determination, container, false);
         TextView textView = viewer.findViewById(R.id.text_facial_fragment);
         tpButton = viewer.findViewById(R.id.takePictureButton);
+        assert textureView != null;
+        textureView.setSurfaceTextureListener(textureListener);
         tpButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View viewer) {
                 takePicture();
             }
         });
