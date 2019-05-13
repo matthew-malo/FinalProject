@@ -30,7 +30,7 @@ public class MusicPreferencesFragment<rockBox> extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private String mParam1 = Integer.toString(R.id.etUsername);
-    private CheckBox rockBox,rapBox,hnrBox, popBox,countryBox,classicalBox;
+    private CheckBox rockBox, rapBox, hnrBox, popBox, countryBox, classicalBox;
     private CheckBox.OnClickListener cbListener;
 
     public MusicPreferencesFragment() {

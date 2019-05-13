@@ -22,22 +22,22 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        etName =(EditText) findViewById(R.id.etName);
-        etAge =(EditText) findViewById(R.id.etAge);
-        etUsername =(EditText) findViewById(R.id.etUsername);
-        etPassword =(EditText) findViewById(R.id.etPassword);
-        etEnterPassword =(EditText) findViewById(R.id.etEnterPassword);
-        bRegister = (Button) findViewById(R.id.bRegister);
+        etName = findViewById(R.id.etName);
+        etAge = findViewById(R.id.etAge);
+        etUsername = findViewById(R.id.etUsername);
+        etPassword = findViewById(R.id.etPassword);
+        etEnterPassword = findViewById(R.id.etEnterPassword);
+        bRegister = findViewById(R.id.bRegister);
 
         bRegister.setOnClickListener(this);
-            }
+    }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.bRegister:
 
-                startActivity (new Intent(this, com.example.moody.Login.class));
+                startActivity(new Intent(this, com.example.moodymusic.Login.class));
 
                 break;
         }

@@ -99,7 +99,6 @@ public class FacialMoodDetermination extends Fragment {
     private Button tpButton;
 
 
-
     public FacialMoodDetermination() {
         // Required empty public constructor
     }
@@ -187,23 +186,26 @@ public class FacialMoodDetermination extends Fragment {
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             openCamera();
         }
+
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
         }
+
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
             return true;
         }
+
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
         }
     };
 
     private void openCamera() {
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         }
-        CameraManager manager = (CameraManager)this.getContext().getSystemService(Context.CAMERA_SERVICE);
+        CameraManager manager = (CameraManager) this.getContext().getSystemService(Context.CAMERA_SERVICE);
         try {
             cameraId = manager.getCameraIdList()[1];
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
@@ -222,11 +224,13 @@ public class FacialMoodDetermination extends Fragment {
             cameraDevice = camera;
             createCameraPreviewSession();
         }
+
         @Override
         public void onDisconnected(CameraDevice camera) {
             cameraDevice.close();
             cameraDevice = null;
         }
+
         @Override
         public void onError(CameraDevice camera, int error) {
             cameraDevice.close();
@@ -235,11 +239,11 @@ public class FacialMoodDetermination extends Fragment {
     };
 
     protected void takePicture() {
-        if(null == cameraDevice) {
+        if (null == cameraDevice) {
             Log.e(TAG, "cameraDevice is null");
             return;
         }
-        CameraManager manager = (CameraManager)this.getContext().getSystemService(Context.CAMERA_SERVICE);
+        CameraManager manager = (CameraManager) this.getContext().getSystemService(Context.CAMERA_SERVICE);
         final FirebaseVisionFaceDetectorOptions highAccuracyOpts =
                 new FirebaseVisionFaceDetectorOptions.Builder()
                         .setPerformanceMode(FirebaseVisionFaceDetectorOptions.ACCURATE)
@@ -324,6 +328,7 @@ public class FacialMoodDetermination extends Fragment {
                         e.printStackTrace();
                     }
                 }
+
                 @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
                 }
@@ -332,6 +337,7 @@ public class FacialMoodDetermination extends Fragment {
             e.printStackTrace();
         }
     }
+
     protected void createCameraPreviewSession() {
         try {
             SurfaceTexture texture = textureView.getSurfaceTexture();
@@ -340,7 +346,7 @@ public class FacialMoodDetermination extends Fragment {
             Surface surface = new Surface(texture);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
-            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback(){
+            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     //The camera is already closed
@@ -350,6 +356,7 @@ public class FacialMoodDetermination extends Fragment {
                     // When the session is ready, we start displaying the preview.
                     cameraCaptureSessions = cameraCaptureSession;
                 }
+
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
                     Toast.makeText(getContext(), "Configuration change", Toast.LENGTH_SHORT).show();
@@ -360,7 +367,7 @@ public class FacialMoodDetermination extends Fragment {
         }
     }
 
-    protected static String getMood(){
+    protected static String getMood() {
         return mood;
     }
 

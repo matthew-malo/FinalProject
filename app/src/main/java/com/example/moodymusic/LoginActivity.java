@@ -1,10 +1,11 @@
-package com.example.moody;
+package com.example.moodymusic;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -16,26 +17,20 @@ public class LoginActivity extends AppCompatActivity {
         configureMainRegister();
     }
 
-    private void configureMainLogin()
-    {
-        Button mainLogin = (Button) findViewById(R.id.mainLogin);
-        mainLogin.setOnClickListener (new View.OnClickListener()
-        {
-            public void onClick (View view)
-            {
-                startActivity (new Intent(LoginActivity.this, Login.class));
+    private void configureMainLogin() {
+        Button mainLogin = findViewById(R.id.mainLogin);
+        mainLogin.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this, com.example.moodymusic.Login.class));
             }
         });
     }
 
-    private void configureMainRegister()
-    {
-        Button mainRegister = (Button) findViewById(R.id.mainRegister);
-        mainRegister.setOnClickListener (new View.OnClickListener()
-        {
-            public void onClick (View view)
-            {
-                startActivity (new Intent (LoginActivity.this, Register.class));
+    private void configureMainRegister() {
+        Button mainRegister = findViewById(R.id.mainRegister);
+        mainRegister.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this, Register.class));
             }
         });
     }

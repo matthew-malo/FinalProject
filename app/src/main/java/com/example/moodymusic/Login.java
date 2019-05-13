@@ -1,13 +1,14 @@
-package com.example.moody;
+package com.example.moodymusic;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
@@ -22,26 +23,26 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        etUsername = (EditText) findViewById (R.id.etUsername);
-        etPassword = (EditText) findViewById (R.id.etPassword);
-        bLogin = (Button) findViewById (R.id.bLogin);
-        tvRegisterLink = (TextView) findViewById(R.id.tvRegisterLink);
+        etUsername = findViewById(R.id.etUsername);
+        etPassword = findViewById(R.id.etPassword);
+        bLogin = findViewById(R.id.bLogin);
+        tvRegisterLink = findViewById(R.id.tvRegisterLink);
 
         bLogin.setOnClickListener(this);
         tvRegisterLink.setOnClickListener(this);
-            }
+    }
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.bLogin:
-                startActivity (new Intent (this, MainActivity.class));
+                startActivity(new Intent(this, MainActivity.class));
 
-            break;
+                break;
 
             case R.id.tvRegisterLink:
 
-                startActivity (new Intent(this, Register.class));
+                startActivity(new Intent(this, Register.class));
 
                 break;
         }

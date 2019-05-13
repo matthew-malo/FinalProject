@@ -27,15 +27,14 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.ibm.cloud.sdk.core.service.security.IamOptions;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneHelper;
 import com.ibm.watson.developer_cloud.android.library.audio.MicrophoneInputStream;
 import com.ibm.watson.developer_cloud.android.library.audio.StreamPlayer;
 import com.ibm.watson.developer_cloud.android.library.audio.utils.ContentType;
-import com.ibm.watson.developer_cloud.service.security.IamOptions;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.SpeechToText;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.model.RecognizeOptions;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.BaseRecognizeCallback;
-import com.ibm.watson.developer_cloud.speech_to_text.v1.websocket.RecognizeCallback;
+import com.ibm.watson.speech_to_text.v1.SpeechToText;
+import com.ibm.watson.speech_to_text.v1.model.RecognizeOptions;
+import com.ibm.watson.speech_to_text.v1.websocket.BaseRecognizeCallback;
 
 import java.io.InputStream;
 
@@ -55,7 +54,7 @@ public class VocalMoodDetermination extends Fragment {
     private MicrophoneHelper microphoneHelper;
     private MicrophoneInputStream capture;
     private MediaRecorder recorder = null;
-    protected String mood;
+    protected static String mood;
     private boolean listening = false;
     private Thread newUIThread;
     final Handler threadHandler = new Handler();
@@ -120,9 +119,9 @@ public class VocalMoodDetermination extends Fragment {
     }
 
     private void runOnUiThread(Runnable runnable) {
-        if(Thread.currentThread() != newUIThread){
+        if (Thread.currentThread() != newUIThread) {
             threadHandler.post(runnable);
-        } else{
+        } else {
             runnable.run();
         }
     }
@@ -136,7 +135,7 @@ public class VocalMoodDetermination extends Fragment {
         return service;
     }
 
-    private RecognizeOptions getRecognizeOptions(InputStream captureStream) {
+    private com.ibm.watson.speech_to_text.v1.model.RecognizeOptions getRecognizeOptions(InputStream captureStream) {
         return new RecognizeOptions.Builder()
                 .audio(captureStream)
                 .contentType(ContentType.OPUS.toString())
@@ -187,14 +186,14 @@ public class VocalMoodDetermination extends Fragment {
         });
     }
 
-        private void showError(Exception e) {
-            Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-            // Update the icon background
-            mic.setBackgroundColor(Color.LTGRAY);
-        }
+    private void showError(Exception e) {
+        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        e.printStackTrace();
+        // Update the icon background
+        mic.setBackgroundColor(Color.LTGRAY);
+    }
 
-        @Override
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
@@ -225,8 +224,8 @@ public class VocalMoodDetermination extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    private class MicrophoneRecognizeDelegate extends BaseRecognizeCallback implements RecognizeCallback {
-        @Override
+
+    private static class MicrophoneRecognizeDelegate extends BaseRecognizeCallback {
         public void onTranscription(com.ibm.watson.developer_cloud.speech_to_text.v1.model.SpeechRecognitionResults speechResults) {
             System.out.println(speechResults);
             if (speechResults.getResults() != null && !speechResults.getResults().isEmpty()) {

@@ -1,5 +1,6 @@
 package com.example.moodymusic;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
             navigationView.setCheckedItem(R.id.nav_login);
         }
@@ -77,8 +78,8 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void onAttachFragment(Fragment fragment){
-        if(TAG.equals("FacialMoodDetermination")){
+    public void onAttachFragment(Fragment fragment) {
+        if (TAG.equals("FacialMoodDetermination")) {
 
         }
     }
@@ -108,8 +109,7 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new LoginFragment()).commit();
 
         } else if (id == R.id.nav_activity_panel) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ActivityPanelFragment()).commit();
-
+            startActivity(new Intent(MainActivity.this, ActivityChooser.class));
         } else if (id == R.id.nav_camera) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FacialMoodDetermination()).commit();
             FacialMoodDetermination.getMood();

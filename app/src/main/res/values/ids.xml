@@ -4,4 +4,5 @@
     <item name="music_preference" type="id" />
     <item name="vocal_mood" type="id" />
     <item name="music_database" type="id" />
+    <item name="fragment_container" type="id" />
 </resources>
