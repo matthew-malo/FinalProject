@@ -102,7 +102,7 @@ public class SpotifyService2 {
     private int playlistChosenPosition;
     private int iterations;
     private Playlist playlistObj;
-    private ArtistSimple artistsObj;
+    private Pager<ArtistSimple> artistsObj;
     private String token;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,11 +161,19 @@ public class SpotifyService2 {
         String time_range = "short_term";
         options.put(SpotifyService.LIMIT, 4);
         options.put(SpotifyService.TIME_RANGE, time_range);
-        spotify.getTopArtists(userIdValue, options, new Callback<ArtistSimple>(){
+        spotify.getTopArtists(userIdValue, options, new Callback<Pager<ArtistSimple>>(){
             @Override
-            public void success(final ArtistSimple artists, Response response) {
+            public void success(final Pager<ArtistSimple> artists, Response response) {
+                if(artists.items.size() > 0){
+                    for(int i = 0; i < artists.items.size(); i++){
+                        if(artists.items.get(i).tracks.total != 0 && artists.items.get(i).tracks.total != 1)
+                        {
+                            playlistIDList.add(artists.items.get(i).id);
+                        }
+                    }
+                }
                 artistsObj = artists;
-                artistIDList.add(artistsObj.name);
+                artistIDList.add(artistsObj.id);
             }
 
             @Override
