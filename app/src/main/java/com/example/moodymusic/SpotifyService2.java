@@ -154,9 +154,9 @@ public class SpotifyService2 {
             }
         });
     }
-
+//
     public void getTopArtists(final String userIdValue){
-        final Map<String, String>  options = new HashMap<>();
+        final Map<String, Object>  options = new HashMap<>();
         userID = userIdValue;
         String time_range = "short_term";
         options.put(SpotifyService.LIMIT, 4);
@@ -181,6 +181,30 @@ public class SpotifyService2 {
             }
         });
     }
+//TODO Add getTopTracks, recommendations append to playlist
+    public void getRecommendatinos(final String userIdValue){
+        final Map<String, Object> options = new HashMap<>();
+        userID = userIdValue;
+        String genre = "happy";
+        options.put(SpotifyService.LIMIT, 100);
+        options.put(SpotifyService.SEED_GENRES, genre);
+        options.put(SpotifyService.SEED_ARTISTS, artists);
+        spotify.getRecommendations(userIdValue, options, new Callback <Recommendations>){
+            @Override
+            public void success(final Recommendations recommendationsArtists, Response response) {
 
+            }
+        }
+    }
+
+    public void addTracksToPlaylist(final String userIdValue){
+        final Map<String, Object> options = new HashMap<>();
+        userID = userIdValue;
+        options.put(SpotifyService.TRACKS, recommendationsArtists);
+        spotify.addTracksToPlaylist(userIdValue, options);
+            @Override
+            public void success()
+                //TODO add on failure
+    }
 
     }
