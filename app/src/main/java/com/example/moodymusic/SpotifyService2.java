@@ -1,10 +1,10 @@
 package com.example.moodymusic;
 
+import java.util.*;
+import java.lang.*;
 import com.example.moodymusic.LoginActivity;
 import com.example.moodymusic.MainActivity;
 import android.support.v4.app.*;
-import java.util.*;
-import java.lang.*;
 import kaaes.spotify.webapi.android.annotations.DELETEWITHBODY;
 import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.Albums;
@@ -51,7 +51,6 @@ import retrofit.http.QueryMap;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import java.util.Random;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyCallback;
 import kaaes.spotify.webapi.android.SpotifyError;
@@ -62,11 +61,8 @@ import kaaes.spotify.webapi.android.models.PlaylistSimple;
 import kaaes.spotify.webapi.android.models.PlaylistTrack;
 import kaaes.spotify.webapi.android.models.UserPrivate;
 import kaaes.spotify.webapi.android.models.UserPublic;
-import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -96,13 +92,12 @@ public class SpotifyService2 {
     private ArrayList<String> playlistNameList = new ArrayList<>();
     private ArrayList<String> playlistIDList = new ArrayList<>();
     private ArrayList<String> playlistCreator = new ArrayList<>();
-    private ArrayList<String> artistIDList = new ArrayList<>();
-    private ArrayList<String> artistNameList = new ArrayList<>();
+    private ArrayList<String> topArtistIDs = new ArrayList<>();
+    private ArrayList<String> tracksRecommended = new ArrayList<>();
     private String userID;
     private int playlistChosenPosition;
-    private int iterations;
     private Playlist playlistObj;
-    private Pager<ArtistSimple> artistsObj;
+    private Pager<Recommendations> recommendationsObj;
     private String token;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,24 +151,19 @@ public class SpotifyService2 {
     }
 //
     public void getTopArtists(final String userIdValue){
-        final Map<String, Object>  options = new HashMap<>();
         userID = userIdValue;
+        final Map<String, Object>  options = new HashMap<>();
         String time_range = "short_term";
         options.put(SpotifyService.LIMIT, 4);
         options.put(SpotifyService.TIME_RANGE, time_range);
-        spotify.getTopArtists(userIdValue, options, new Callback<Pager<ArtistSimple>>(){
+        spotify.getTopArtists(options, new Callback<Pager<Artist>>(){
             @Override
-            public void success(final Pager<ArtistSimple> artists, Response response) {
-                if(artists.items.size() > 0){
-                    for(int i = 0; i < artists.items.size(); i++){
-                        if(artists.items.get(i).tracks.total != 0 && artists.items.get(i).tracks.total != 1)
-                        {
-                            playlistIDList.add(artists.items.get(i).id);
-                        }
+            public void success(Pager<Artist> artistPager, Response response) {
+                if(artistPager.total > 0){
+                    for(int i = 0; i < artistPager.items.size(); i++){
+                        topArtistIDs.add(artistPager.items.get(i).id);
                     }
                 }
-                artistsObj = artists;
-                artistIDList.add(artistsObj.id);
             }
 
             @Override
@@ -181,30 +171,41 @@ public class SpotifyService2 {
             }
         });
     }
-//TODO Add getTopTracks, recommendations append to playlist
+
     public void getRecommendatinos(final String userIdValue){
         final Map<String, Object> options = new HashMap<>();
         userID = userIdValue;
         String genre = "happy";
         options.put(SpotifyService.LIMIT, 100);
-        options.put(SpotifyService.SEED_GENRES, genre);
-        options.put(SpotifyService.SEED_ARTISTS, artists);
-        spotify.getRecommendations(userIdValue, options, new Callback <Recommendations>){
+        options.put(SpotifyService.FIELDS, genre);
+        options.put(SpotifyService.FIELDS, topArtistIDs);
+        spotify.getRecommendations(userIdValue, options, new Callback <Pager<Recommendations>>(){
             @Override
-            public void success(final Recommendations recommendationsArtists, Response response) {
-
+            public void success(final Pager<Recommendations> recommendations, Response response) {
+                recommendationsObj = recommendations;
+                tracksRecommended.add(recommendationsObj.items.get(id));
             }
-        }
-    }
-
-    public void addTracksToPlaylist(final String userIdValue){
-        final Map<String, Object> options = new HashMap<>();
-        userID = userIdValue;
-        options.put(SpotifyService.TRACKS, recommendationsArtists);
-        spotify.addTracksToPlaylist(userIdValue, options);
             @Override
-            public void success()
-                //TODO add on failure
+            public void failure(RetrofitError error) {
+            }
+        });
     }
 
-    }
+    public void addTracksToPlaylist(String userIdValue, Playlist playlist, Pager<PlaylistTrack> playlistTrackPager){
+        for (int i = 0; i < playlistTrackPager.items.size(); i++) {
+            tracksRecommended.add(playlistTrackPager.items.get(i).track.uri.toString());
+        }
+        Map<String, Object> query = new HashMap<>();
+        Map<String, Object> body = new HashMap<>();
+        body.put("uris", (tracksRecommended));
+        spotify.addTracksToPlaylist(userIdValue, playlist.id, query, body,
+                new SpotifyCallback<Pager<PlaylistTrack>>() {
+                    @Override
+                    public void success(Pager<PlaylistTrack> playlistTrackPager, Response response) {
+                    }
+
+                    @Override
+                    public void failure(SpotifyError spotifyError) {
+                    }
+                });
+    }}
