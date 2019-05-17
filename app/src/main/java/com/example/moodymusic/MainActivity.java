@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity
     private static final String CLIENT_ID = "0a56920e0ebb4095b0588d139919af68";
     private static final String REDIRECT_URI = "moody-music-app-login://callback";
     private SpotifyAppRemote mSpotifyAppRemote;
-    private static final int REQUEST_CAMERA_PERMISSION = 200;
     protected String mood = "";
     private String TAG;
 
