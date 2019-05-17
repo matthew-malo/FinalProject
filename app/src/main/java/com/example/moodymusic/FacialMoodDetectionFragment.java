@@ -79,13 +79,9 @@ public class FacialMoodDetectionFragment extends Fragment {
     protected CameraCaptureSession cameraCaptureSessions;
     protected CaptureRequest.Builder captureRequestBuilder;
     private Size imageDimension;
-    private ImageReader imageReader;
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private CameraManager camManager;
-    protected static String mood = new String("");
+    protected static String mood;
     private Button tpButton;
-    private File newFile;
-    private CaptureRequest captureRequest;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static{
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -239,11 +235,9 @@ public class FacialMoodDetectionFragment extends Fragment {
             cameraFront.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    //The camera is already closed
                     if (null == cameraFront) {
                         return;
                     }
-                    // When the session is ready, we start displaying the preview.
                     cameraCaptureSessions = cameraCaptureSession;
                 }
 
@@ -330,11 +324,11 @@ public class FacialMoodDetectionFragment extends Fragment {
                                             float smileProb = face.getSmilingProbability();
                                             float rightEyeOpenProb = face.getRightEyeOpenProbability();
 
-                                            if (smileProb > .80 && rightEyeOpenProb > .80) {
+                                            if (smileProb > .90 && rightEyeOpenProb > .90) {
                                                 mood = "Happy";
-                                            } else if (smileProb < .80 && rightEyeOpenProb > .80) {
+                                            } else if (smileProb < .90 && rightEyeOpenProb > .90) {
                                                 mood = "Angry";
-                                            } else if (smileProb < .80 && rightEyeOpenProb < .80) {
+                                            } else if (smileProb < .90 && rightEyeOpenProb < .90) {
                                                 mood = "Sad";
                                             }
                                             new AlertDialog.Builder(getContext())
