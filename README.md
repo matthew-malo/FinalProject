@@ -1,9 +1,6 @@
 # FinalProject
 
-Android Application to determine a user's mood via facial recognition provided by: 
-  Google's Firebase MLKit, specifically Mobile Vision
-  IBM Watson's Speech to Text
-  Spotify for Music Streaming
+Android Application to determine a user's mood via facial recognition provided by: Google's Firebase MLKit, specifically Mobile Vision, IBM Watson's Speech to Text, and Spotify for Music Streaming
   
 Camera API provided by Google Samples 
   Camera2Basic Sample: https://github.com/googlesamples/android-Camera2Basic
