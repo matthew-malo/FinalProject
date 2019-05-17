@@ -14,9 +14,7 @@ package com.example.moodymusic;
 
 import android.app.AlertDialog;
 import android.graphics.Color;
-import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,13 +41,10 @@ public class VocalMoodDetectionFragment extends Fragment {
 
     private MicrophoneHelper microphoneHelper;
     private MicrophoneInputStream capture;
-    private MediaRecorder recorder = null;
     private boolean listening = false;
-    private Handler threadHandler = new Handler();
     SpeechToText speechService = initSpeechToTextService();
     ImageButton recordVoice;
     private String mood = "";
-    private double confidence = 0;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
