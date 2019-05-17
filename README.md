@@ -7,5 +7,6 @@ Android Application to determine a user's mood via facial recognition provided b
   
 Camera API provided by Google Samples 
   Camera2Basic Sample: https://github.com/googlesamples/android-Camera2Basic
+
 Microphone integration and Speech-to-Text provided by 
   IBM Watson's Android SDK: https://github.com/watson-developer-cloud/android-sdk
