@@ -111,10 +111,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_activity_panel) {
             startActivity(new Intent(MainActivity.this, ActivityChooser.class));
         } else if (id == R.id.nav_camera) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FacialMoodDetermination()).commit();
-            FacialMoodDetermination.getMood();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FacialMoodDetectionFragment()).commit();
         } else if (id == R.id.nav_microphone) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VocalMoodDetermination()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new VocalMoodDetectionFragment()).commit();
 
         } else if (id == R.id.nav_music) {
 
