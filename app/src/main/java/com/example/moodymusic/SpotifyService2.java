@@ -108,9 +108,6 @@ public class SpotifyService2 {
         builder.setScopes(new String[]{"user-top-read", "playlist-modify-private", "playlist-modify-public", "user-modify-playback-state"});
         builder.setShowDialog(true);
         request = builder.build();
-
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-
     }
 
     private void startSpotifyService() {
@@ -183,7 +180,7 @@ public class SpotifyService2 {
             @Override
             public void success(final Pager<Recommendations> recommendations, Response response) {
                 recommendationsObj = recommendations;
-                tracksRecommended.add(recommendationsObj.items.get(id));
+                tracksRecommended.add(recommendationsObj.id);
             }
             @Override
             public void failure(RetrofitError error) {
