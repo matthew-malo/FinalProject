@@ -93,6 +93,8 @@ public class VocalMoodDetectionFragment extends Fragment {
         return viewer;
     }
 
+    //instantiates a new speech to text service including API Key provided via IBM
+    //IAM options generates a new token for each user so we do not have to reauthenticate
     private SpeechToText initSpeechToTextService() {
         IamOptions options = new IamOptions.Builder()
                 .apiKey("e4cMYVoDJWquCBRPhf0J8ZKnV5RUF96CfoL93nU-wFDa")
@@ -102,6 +104,7 @@ public class VocalMoodDetectionFragment extends Fragment {
         return service;
     }
 
+    //Sets recognition options for transcription
     private RecognizeOptions getRecognizeOptions(InputStream captureStream) {
         return new RecognizeOptions.Builder()
                 .audio(captureStream)
@@ -112,6 +115,7 @@ public class VocalMoodDetectionFragment extends Fragment {
                 .build();
     }
 
+    //Display mood via text upon determination since we cannot send to Spotify for music streaming
     private void showOutput(final String text){
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -127,6 +131,8 @@ public class VocalMoodDetectionFragment extends Fragment {
     private void showError(Exception e) {
         e.printStackTrace();
     }
+    
+    //Class necessary for recognition and transcription. If results are not null the output is assigned to mood
     private class MicrophoneRecognizeDelegate extends BaseRecognizeCallback {
         @Override
         public void onTranscription(SpeechRecognitionResults speechResults) {
@@ -158,11 +164,13 @@ public class VocalMoodDetectionFragment extends Fragment {
             enableMicButton();
         }
 
+        //when recording is finished, re-enable microphone button for use
         @Override
         public void onDisconnected() {
             enableMicButton();
         }
     }
+    //enables microphone for use
     private void enableMicButton() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
