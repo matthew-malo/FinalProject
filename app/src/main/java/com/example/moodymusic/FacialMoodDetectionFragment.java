@@ -115,6 +115,8 @@ public class FacialMoodDetectionFragment extends Fragment {
         return viewer;
     }
 
+    //Issues with creating the preview after the fragment is loaded, tried to create it after view is loaded but
+    //still not working
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         cameraPreview = view.findViewById(R.id.tView);
         cameraPreview.setSurfaceTextureListener(textureListener);
@@ -162,6 +164,8 @@ public class FacialMoodDetectionFragment extends Fragment {
         return (ORIENTATIONS.get(rotation) + +270) % 360;
     }
 
+    //Surface Texture Listener to create a preview for the camera via the texture layout in the corresponding
+    // XML file. If the view is available, the camera opens
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -182,6 +186,8 @@ public class FacialMoodDetectionFragment extends Fragment {
         }
     };
 
+    //Callback interface for camera functionality. When front camera is opened, attempt to create a preview session. If camera
+    // is disconnected, close the front camera. On an error, close and nullify the front camera to reset.
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(CameraDevice camera) {
@@ -198,6 +204,7 @@ public class FacialMoodDetectionFragment extends Fragment {
             cameraFront = null;
         }
     };
+    //Capture callback interface configured to recreate the camera preview session upon the successful capture of a picture
     final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
@@ -206,7 +213,9 @@ public class FacialMoodDetectionFragment extends Fragment {
         }
     };
 
-
+    //Method to open the camera. First check if camera permission is granted, and request it if not
+    //Then, access the camera ([1] signifies the front camera), retrieve its characteristics to configure the stream config. map
+    //necessary for creating a capture session. Image dimensions are set according to the output size to correctly fit the picture
     private void openCamera() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
@@ -224,6 +233,9 @@ public class FacialMoodDetectionFragment extends Fragment {
         }
     }
 
+    //Method to create a camera preview so that the user can see what facial expression they are making before taking
+    // a picture with the application. Assign the surface texture that was deemed available in the initialization of the
+    //texture listener. Create a capture request using the methods provided by the Google Samples files
     protected void createCameraPreviewSession() {
         try {
             SurfaceTexture texture = cameraPreview.getSurfaceTexture();
@@ -252,6 +264,10 @@ public class FacialMoodDetectionFragment extends Fragment {
         }
     }
 
+    //Modified version of the Google Samples code to take a picture if the camera is open and a preview session has
+    //been successfully created. Image reader is fed basic parameters, as well as the prefered image format for emotion
+    //detection in Firebase, with a maximum image number set to 1 to allow the proper functionality after a picture is
+    //taken. 
     protected void takePicture() {
         if (null == cameraFront) {
             Log.e(TAG, "cameraFront is null");
@@ -268,7 +284,7 @@ public class FacialMoodDetectionFragment extends Fragment {
             final CaptureRequest.Builder captureBuilder = cameraFront.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(reader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            // Orientation
+            // Set rotation of camera if necessary based on orientation retrieved
             final int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
@@ -276,10 +292,12 @@ public class FacialMoodDetectionFragment extends Fragment {
                 public void onImageAvailable(ImageReader reader) {
                     Image image = null;
                     image = reader.acquireLatestImage();
+                    //Send image to determine method to analyze via firebase
                     determine(image);
                 }
             };
             reader.setOnImageAvailableListener(readerListener, camBackgroundHandler);
+            //recreate preview session so user can take a new picture if mood was incorrect, or has changed
             final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
@@ -306,6 +324,9 @@ public class FacialMoodDetectionFragment extends Fragment {
         }
     }
 
+    //Method to determine emotion/mood detection via Firebase calls. Converts image to Firebase image for analysis
+    //On successful conversion, image added to Firebase vision face list (Firebase allows for multiple face processing)
+    //Image then analyzed and necessary probabilities computed to determine mood with 90% accuracy threshold.
     private void determine(Image image){
         FirebaseVisionImage image2 = null;
         try {
@@ -331,6 +352,7 @@ public class FacialMoodDetectionFragment extends Fragment {
                                             } else if (smileProb < .90 && rightEyeOpenProb < .90) {
                                                 mood = "Sad";
                                             }
+                                            //Unable to link mood output to Spotify, so display mood instead
                                             new AlertDialog.Builder(getContext())
                                                     .setTitle("Mood Determined:")
                                                     .setMessage(mood)
@@ -347,6 +369,7 @@ public class FacialMoodDetectionFragment extends Fragment {
                                 });
     }
 
+    //background thread handlers for camera class to avoid crashing
     protected void startBackgroundThread() {
         camBackgroundThread = new HandlerThread("Camera Background");
         camBackgroundThread.start();
@@ -363,6 +386,7 @@ public class FacialMoodDetectionFragment extends Fragment {
         }
     }
 
+    //On resume method included to avoid crashing when user switches between fragments
     @Override
     public void onResume() {
         super.onResume();
@@ -373,6 +397,7 @@ public class FacialMoodDetectionFragment extends Fragment {
             cameraPreview.setSurfaceTextureListener(textureListener);
         }
     }
+    //On pause method included to avoid crashing when user switches between fragments
     @Override
     public void onPause() {
         stopBackgroundThread();
